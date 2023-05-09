@@ -28,6 +28,18 @@ export class Queen extends Figure{
         return false;
     }
     canBeat(target: Cell) {
-        return this.canMove(target);
+        if(!super.canMove(target)){
+            return false;
+        }
+        if(this.cell.canBeatVertical(target)){
+            return true;
+        }
+        if(this.cell.canBeatHorizontal(target)){
+            return true;
+        }
+        if(this.cell.canBeatDiagonal(target)){
+            return true;
+        }
+        return false;
     }
 }

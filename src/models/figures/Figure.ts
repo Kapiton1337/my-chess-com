@@ -33,10 +33,7 @@ export class Figure {
             return false
         if (target.figure?.name === FigureNames.KING)
             return false;
-        if (this.name === FigureNames.KING && this.color === Colors.WHITE && this.cell.isUnderAttackBlack() ||
-            this.name === FigureNames.KING && this.color === Colors.BLACK && this.cell.isUnderAttackWhite()) {
-            console.log("Check");
-        }
+
         return true;
     }
 

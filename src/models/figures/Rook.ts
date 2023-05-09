@@ -26,6 +26,15 @@ export class Rook extends Figure {
     }
 
     canBeat(target: Cell) {
-        return this.canMove(target);
+        if (!super.canMove(target)) {
+            return false;
+        }
+        if (this.cell.canBeatVertical(target)) {
+            return true;
+        }
+        if (this.cell.canBeatHorizontal(target)) {
+            return true;
+        }
+        return false;
     }
 }

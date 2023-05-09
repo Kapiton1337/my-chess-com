@@ -22,7 +22,13 @@ export class Bishop extends Figure{
         return false;
     }
     canBeat(target: Cell) {
-        return this.canMove(target);
+        if(!super.canMove(target)){
+            return false;
+        }
+        if(this.cell.canBeatDiagonal(target)){
+            return true;
+        }
+        return false;
     }
 
 }
