@@ -27,17 +27,26 @@ export class Pawn extends Figure {
             return true;
         }
 
-        if (target.y === this.cell.y + direction && (target.x === this.cell.x + 1 || target.x === this.cell.x - 1) && this.cell.isEnemy(target)){
+        if (target.y === this.cell.y + direction && (target.x === this.cell.x + 1 || target.x === this.cell.x - 1) && this.cell.isEnemy(target)) {
             return true;
         }
-            return false;
+        return false;
     }
 
     moveFigure(target: Cell) {
         super.moveFigure(target);
         this.isFirstStep = false;
     }
+
     canBeat(target: Cell) {
-        this.canMove(target);
+        if (!super.canMove(target)) {
+            return false;
+        }
+        const direction = this.cell.figure?.color === Colors.BLACK ? 1 : -1;
+
+        if (target.y === this.cell.y + direction && (target.x === this.cell.x + 1 || target.x === this.cell.x - 1)) {
+            return true;
+        }
+        return false;
     }
 }

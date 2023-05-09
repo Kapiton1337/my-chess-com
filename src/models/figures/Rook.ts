@@ -26,6 +26,6 @@ export class Rook extends Figure {
     }
 
     canBeat(target: Cell) {
-        this.canMove(target);
+        return this.canMove(target);
     }
 }

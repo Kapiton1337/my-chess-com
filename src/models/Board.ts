@@ -27,22 +27,36 @@ export class Board {
         }
     }
 
-    public updateCellsUnderAttack() {
+    public cleanCellsUnderAttack() {
         for (let i = 0; i < this.cells.length; i++) {
             const row = this.cells[i];
             for (let j = 0; j < row.length; j++) {
                 const target = row[j];
+                target.underAttackWhite = false;
+                target.underAttackBlack = false;
+            }
+        }
+    }
 
+    public beatCellsFigure(figure: Figure){
+        for (let k = 0; k < this.cells.length; k++) {
+            const rowCells = this.cells[k];
+            for (let l = 0; l < rowCells.length; l++) {
+                const cell = rowCells[l];
+                figure.color === Colors.WHITE ? (cell.underAttackWhite = !cell.underAttackWhite ? figure.canBeat(cell) : true) :
+                    (cell.underAttackBlack = !cell.underAttackBlack ? figure.canBeat(cell) : true);
+            }
+        }
+    }
+
+    public updateCellsUnderAttack() {
+        this.cleanCellsUnderAttack();
+        for (let i = 0; i < this.cells.length; i++) {
+            const row = this.cells[i];
+            for (let j = 0; j < row.length; j++) {
+                const target = row[j];
                 if (target.figure) {
-                    const figure = target.figure;
-                    for (let k = 0; k < this.cells.length; k++) {
-                        const rowCells = this.cells[k];
-                        for (let l = 0; l < rowCells.length; l++) {
-                            const cell = rowCells[l];
-                            figure.color === Colors.WHITE ? (cell.underAttackWhite = !cell.underAttackWhite ? !!figure.canMove(cell) : true) :
-                                (cell.underAttackBlack = !cell.underAttackBlack ? !!figure.canMove(cell) : true);
-                        }
-                    }
+                    this.beatCellsFigure(target.figure);
                 }
             }
         }
