@@ -25,7 +25,7 @@ export class Bishop extends Figure{
         if(!super.canMove(target)){
             return false;
         }
-        if(this.cell.canBeatDiagonal(target)){
+        if(this.cell.canBeatDiagonal(target, this.color, this.name)){
             return true;
         }
         return false;

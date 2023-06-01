@@ -6,7 +6,7 @@ import {Queen} from "./figures/Queen";
 import {Rook} from "./figures/Rook";
 import {Knight} from "./figures/Knight";
 import {Bishop} from "./figures/Bishop";
-import {Figure} from "./figures/Figure";
+import {Figure, FigureNames} from "./figures/Figure";
 
 export class Board {
     cells: Cell[][] = [];
@@ -26,7 +26,6 @@ export class Board {
             this.cells.push(row);
         }
     }
-
     public cleanCellsUnderAttack() {
         for (let i = 0; i < this.cells.length; i++) {
             const row = this.cells[i];
@@ -63,7 +62,6 @@ export class Board {
     }
 
     public highlightCells(selectedCell: Cell | null) {
-        this.updateCellsUnderAttack();
         for (let i = 0; i < this.cells.length; i++) {
             const row = this.cells[i];
             for (let j = 0; j < row.length; j++) {

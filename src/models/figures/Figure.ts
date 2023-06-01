@@ -29,6 +29,10 @@ export class Figure {
     }
 
     canMove(target: Cell): boolean {
+        console.log(this.cell.isKingUnderCheck());
+        if(this.cell.isKingUnderCheck()){
+            return false;
+        };
         if (target.figure?.color === this.color)
             return false
         if (target.figure?.name === FigureNames.KING)
