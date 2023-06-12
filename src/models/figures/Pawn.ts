@@ -15,6 +15,12 @@ export class Pawn extends Figure {
     }
 
     canMove(target: Cell): boolean {
+        if(this.color === Colors.WHITE && Figure.isWhiteKingUnderCheck){
+            return false;
+        }
+        if(this.color === Colors.BLACK && Figure.isBlackKingUnderCheck){
+            return false;
+        }
         if (!super.canMove(target)) {
             return false;
         }
@@ -39,7 +45,7 @@ export class Pawn extends Figure {
     }
 
     canBeat(target: Cell) {
-        if (!super.canMove(target)) {
+        if (!super.canBeat(target)) {
             return false;
         }
         const direction = this.cell.figure?.color === Colors.BLACK ? 1 : -1;

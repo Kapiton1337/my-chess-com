@@ -6,6 +6,7 @@ import {Player} from "./models/Player";
 import {Colors} from "./models/Colors";
 import LostFigures from "./components/LostFigures";
 import Timer from "./components/Timer";
+import {Figure} from "./models/figures/Figure";
 
 function App() {
     const [board, setBoard] = useState(new Board());
@@ -25,10 +26,9 @@ function App() {
         newBoard.addFigures();
         setCurrentPlayer(new Player(Colors.WHITE));
         setBoard(newBoard);
-        updateCellsUnderAttack();
     }
-    function updateCellsUnderAttack(){
-        board.updateCellsUnderAttack();
+    function setBeatCells(){
+        board.setBeatCells();
     }
 
     function swapPlayer() {
@@ -42,7 +42,7 @@ function App() {
                 board={board}
                 setBoard={setBoard}
                 currentPlayer={currentPlayer}
-                updateCellsUnderAttack={updateCellsUnderAttack}
+                setBeatCells={setBeatCells}
                 swapPlayer={swapPlayer}
             />
             <div>

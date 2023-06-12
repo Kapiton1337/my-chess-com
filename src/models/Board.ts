@@ -10,8 +10,11 @@ import {Figure, FigureNames} from "./figures/Figure";
 
 export class Board {
     cells: Cell[][] = [];
+    figures: { black: Figure[], white: Figure[] } = {black: [], white: []};
     lostBlackFigures: Figure[] = [];
     lostWhiteFigures: Figure[] = [];
+    whiteKingUnderAttack: boolean = false;
+    blackKingUnderAttack: boolean = false;
 
     public initCells() {
         for (let i = 0; i < 8; i++) {
@@ -26,36 +29,56 @@ export class Board {
             this.cells.push(row);
         }
     }
-    public cleanCellsUnderAttack() {
-        for (let i = 0; i < this.cells.length; i++) {
-            const row = this.cells[i];
-            for (let j = 0; j < row.length; j++) {
-                const target = row[j];
-                target.underAttackWhite = false;
-                target.underAttackBlack = false;
+
+    public checkIfCanBeat(figure: Figure) {
+        for (let rowCells of this.cells) {
+            for (let cell of rowCells) {
+                if (figure.canBeat(cell)) {
+                    figure.addCellCanAttack(cell);
+                    cell.addBeatCellFigure(figure);
+                }
             }
         }
     }
 
-    public beatCellsFigure(figure: Figure){
-        for (let k = 0; k < this.cells.length; k++) {
-            const rowCells = this.cells[k];
-            for (let l = 0; l < rowCells.length; l++) {
-                const cell = rowCells[l];
-                figure.color === Colors.WHITE ? (cell.underAttackWhite = !cell.underAttackWhite ? figure.canBeat(cell) : true) :
-                    (cell.underAttackBlack = !cell.underAttackBlack ? figure.canBeat(cell) : true);
+    public clearIfCanBeat() {
+        for (let row of this.cells) {
+            for (let cell of row) {
+                cell.clearBeatCellFigure();
+                cell.figure?.clearCellCanAttack();
             }
         }
     }
 
-    public updateCellsUnderAttack() {
-        this.cleanCellsUnderAttack();
-        for (let i = 0; i < this.cells.length; i++) {
-            const row = this.cells[i];
-            for (let j = 0; j < row.length; j++) {
-                const target = row[j];
-                if (target.figure) {
-                    this.beatCellsFigure(target.figure);
+    public setBeatCells() {
+        let allFigures = [...this.figures.white, ...this.figures.black];
+        this.clearIfCanBeat();
+        allFigures.forEach(figure => {
+            this.checkIfCanBeat(figure);
+        })
+        this.checkIsWhiteKingUnderAttack();
+        this.checkIsBlackKingUnderAttack();
+    }
+
+    public checkIsWhiteKingUnderAttack() {
+        for (let figure of this.figures.white) {
+            if (figure.name === FigureNames.KING) {
+                if (figure.cell.isUnderAttackBlack()) {
+                    figure.setWhiteKingUnderCheck();
+                } else {
+                    figure.removeWhiteKingUnderCheck();
+                }
+            }
+        }
+    }
+
+    public checkIsBlackKingUnderAttack() {
+        for (let figure of this.figures.black) {
+            if (figure.name === FigureNames.KING) {
+                if (figure.cell.isUnderAttackWhite()) {
+                    figure.setBlackKingUnderCheck();
+                } else {
+                    figure.removeBlackKingUnderCheck();
                 }
             }
         }
@@ -73,6 +96,7 @@ export class Board {
 
     public getCopyBoard(): Board {
         const newBoard = new Board();
+        newBoard.figures = {black: [...this.figures.black], white: [...this.figures.white]}
         newBoard.cells = this.cells;
         newBoard.lostWhiteFigures = this.lostWhiteFigures;
         newBoard.lostBlackFigures = this.lostBlackFigures;
@@ -85,40 +109,40 @@ export class Board {
 
     private addPawns() {
         for (let i = 0; i < 8; i++) {
-            new Pawn(Colors.BLACK, this.getCell(1, i));
-            new Pawn(Colors.WHITE, this.getCell(6, i));
+            this.figures.black.push(new Pawn(Colors.BLACK, this.getCell(1, i)));
+            this.figures.white.push(new Pawn(Colors.WHITE, this.getCell(6, i)));
         }
     }
 
     private addKings() {
-        new King(Colors.BLACK, this.getCell(0, 4));
-        new King(Colors.WHITE, this.getCell(7, 4));
+        this.figures.black.push(new King(Colors.BLACK, this.getCell(0, 4)));
+        this.figures.white.push(new King(Colors.WHITE, this.getCell(7, 4)));
     }
 
     private addQueens() {
-        new Queen(Colors.BLACK, this.getCell(0, 3));
-        new Queen(Colors.WHITE, this.getCell(7, 3));
+        this.figures.black.push(new Queen(Colors.BLACK, this.getCell(0, 3)));
+        this.figures.white.push(new Queen(Colors.WHITE, this.getCell(7, 3)));
     }
 
     private addRooks() {
-        new Rook(Colors.BLACK, this.getCell(0, 0));
-        new Rook(Colors.BLACK, this.getCell(0, 7));
-        new Rook(Colors.WHITE, this.getCell(7, 0));
-        new Rook(Colors.WHITE, this.getCell(7, 7));
+        this.figures.black.push(new Rook(Colors.BLACK, this.getCell(0, 0)));
+        this.figures.black.push(new Rook(Colors.BLACK, this.getCell(0, 7)));
+        this.figures.white.push(new Rook(Colors.WHITE, this.getCell(7, 0)));
+        this.figures.white.push(new Rook(Colors.WHITE, this.getCell(7, 7)));
     }
 
     private addKnights() {
-        new Knight(Colors.BLACK, this.getCell(0, 1));
-        new Knight(Colors.BLACK, this.getCell(0, 6));
-        new Knight(Colors.WHITE, this.getCell(7, 1));
-        new Knight(Colors.WHITE, this.getCell(7, 6));
+        this.figures.black.push(new Knight(Colors.BLACK, this.getCell(0, 1)));
+        this.figures.black.push(new Knight(Colors.BLACK, this.getCell(0, 6)));
+        this.figures.white.push(new Knight(Colors.WHITE, this.getCell(7, 1)));
+        this.figures.white.push(new Knight(Colors.WHITE, this.getCell(7, 6)));
     }
 
     private addBishops() {
-        new Bishop(Colors.BLACK, this.getCell(0, 2));
-        new Bishop(Colors.BLACK, this.getCell(0, 5));
-        new Bishop(Colors.WHITE, this.getCell(7, 2));
-        new Bishop(Colors.WHITE, this.getCell(7, 5));
+        this.figures.black.push(new Bishop(Colors.BLACK, this.getCell(0, 2)));
+        this.figures.black.push(new Bishop(Colors.BLACK, this.getCell(0, 5)));
+        this.figures.white.push(new Bishop(Colors.WHITE, this.getCell(7, 2)));
+        this.figures.white.push(new Bishop(Colors.WHITE, this.getCell(7, 5)));
     }
 
     public addFigures() {
@@ -128,5 +152,6 @@ export class Board {
         this.addRooks();
         this.addKnights();
         this.addBishops();
+        this.setBeatCells();
     }
 }

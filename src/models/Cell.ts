@@ -7,8 +7,7 @@ export class Cell {
     readonly y: number;
     readonly color: Colors;
     figure: Figure | null;
-    underAttackBlack: boolean;
-    underAttackWhite: boolean;
+    beatCellFigures: { black: Figure[], white: Figure[] };
     board: Board;
     available: boolean;
     id: number;
@@ -18,19 +17,10 @@ export class Cell {
         this.y = y;
         this.color = color;
         this.figure = figure;
-        this.underAttackWhite = false;
-        this.underAttackBlack = false;
+        this.beatCellFigures = {black: [], white: []};
         this.board = board;
         this.available = false;
         this.id = Math.random();
-    }
-
-    isUnderAttackWhite() {
-        return this.underAttackWhite;
-    }
-
-    isUnderAttackBlack() {
-        return this.underAttackBlack;
     }
 
     isEmpty() {
@@ -51,7 +41,7 @@ export class Cell {
         for (let i = 1; i < absY; i++) {
             const cell = this.board.getCell(this.y + dy * i, this.x + dx * i);
             if (!cell.isEmpty()) { //есть фигура
-                if (cell.figure?.name === FigureNames.KING && cell.figure.color !== color){
+                if (cell.figure?.name === FigureNames.KING && cell.figure.color !== color) {
                     return true;
                 }
                 return false;
@@ -94,7 +84,7 @@ export class Cell {
         for (let y = min + 1; y < max; y++) {
             const cell = this.board.getCell(y, this.x);
             if (!cell.isEmpty()) { //есть фигура
-                if (cell.figure?.name === FigureNames.KING && cell.figure.color !== color){
+                if (cell.figure?.name === FigureNames.KING && cell.figure.color !== color) {
                     return true;
                 }
                 return false;
@@ -126,7 +116,7 @@ export class Cell {
         for (let x = min + 1; x < max; x++) {
             const cell = this.board.getCell(this.y, x);
             if (!cell.isEmpty()) { //есть фигура
-                if (cell.figure?.name === FigureNames.KING && cell.figure.color !== color){
+                if (cell.figure?.name === FigureNames.KING && cell.figure.color !== color) {
                     return true;
                 }
                 return false;
@@ -149,22 +139,6 @@ export class Cell {
         return true;
     }
 
-    public isKingUnderCheck(){
-        for(let i = 0; i < this.board.cells.length; i++){
-            const row = this.board.cells[i];
-            for(let j = 0; j < row.length; j++){
-                const cell = row[j];
-                if(cell.figure?.name === FigureNames.KING && cell.figure.color === Colors.BLACK && cell.underAttackWhite){
-                    return true;
-                }
-                if(cell.figure?.name === FigureNames.KING && cell.figure.color === Colors.WHITE && cell.underAttackWhite){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     setFigure(figure: Figure) {
         this.figure = figure;
         this.figure.cell = this;
@@ -183,5 +157,27 @@ export class Cell {
             target.setFigure(this.figure);
             this.figure = null;
         }
+    }
+
+    addBeatCellFigure(figure: Figure) {
+        if (figure.color === Colors.WHITE) {
+            this.beatCellFigures.white.push(figure);
+        } else this.beatCellFigures.black.push(figure);
+    }
+
+    clearBeatCellFigure() {
+        this.beatCellFigures = {black: [], white: []};
+    }
+
+    isUnderAttackWhite() {
+        for (let figure of this.beatCellFigures.white)
+            return true
+        return false;
+    }
+
+    isUnderAttackBlack() {
+        for (let figure of this.beatCellFigures.black)
+            return true
+        return false;
     }
 }

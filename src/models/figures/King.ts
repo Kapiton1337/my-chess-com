@@ -12,17 +12,14 @@ export class King extends Figure {
     }
 
     canMove(target: Cell): boolean {
-        if(target.isUnderAttackBlack() && this.color === Colors.WHITE){
-            return false;
-        }
-        if(target.isUnderAttackWhite() && this.color === Colors.BLACK){
-            return false;
+        for(let figure of [...target.beatCellFigures.black, ...target.beatCellFigures.white]){
+            if(figure.color !== this.color) return false;
         }
         return this.canBeat(target);
     }
 
     canBeat(target: Cell) {
-        if (!super.canMove(target)) {
+        if (!super.canBeat(target)) {
             return false;
         }
         const dx = Math.abs(target.x - this.cell.x);

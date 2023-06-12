@@ -12,7 +12,13 @@ export class Knight extends Figure{
         this.name = FigureNames.KNIGHT;
     }
 
-    canMove(target: Cell): boolean {
+    canMove(target: Cell) {
+        if(this.color === Colors.WHITE && Figure.isWhiteKingUnderCheck){
+            return false;
+        }
+        if(this.color === Colors.BLACK && Figure.isBlackKingUnderCheck){
+            return false;
+        }
         if(!super.canMove(target)){
             return false;
         }
@@ -25,7 +31,17 @@ export class Knight extends Figure{
 
         return false;
     }
-    canBeat(target: Cell) {
-        return this.canMove(target);
+    canBeat(target: Cell):boolean {
+        if(!super.canBeat(target)){
+            return false;
+        }
+        const dx = Math.abs(target.x - this.cell.x);
+        const dy = Math.abs(target.y - this.cell.y);
+
+        if(dx === 1 && dy === 2 || dx === 2 && dy === 1){
+            return true;
+        }
+
+        return false;
     }
 }

@@ -4,16 +4,17 @@ import CellComponent from "./CellComponent";
 import {Cell} from "../models/Cell";
 import {Player} from "../models/Player";
 import {Colors} from "../models/Colors";
+import {Figure} from "../models/figures/Figure";
 
 interface BoardProps {
     board: Board;
     setBoard: (board: Board) => void;
     currentPlayer: Player | null;
-    updateCellsUnderAttack: () => void;
+    setBeatCells: () => void;
     swapPlayer: () => void;
 }
 
-const BoardComponent: FC<BoardProps> = ({board, setBoard, currentPlayer, swapPlayer, updateCellsUnderAttack}) => {
+const BoardComponent: FC<BoardProps> = ({board, setBoard, currentPlayer, swapPlayer, setBeatCells}) => {
     const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
 
     function click(cell: Cell) {
@@ -21,10 +22,11 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentPlayer, swapPla
             selectedCell.moveFigure(cell);
             swapPlayer();
             setSelectedCell(null);
-            updateCellsUnderAttack();
+            setBeatCells();
         } else {
             if (cell.figure?.color === currentPlayer?.color)
                 setSelectedCell(cell);
+
         }
     }
 
