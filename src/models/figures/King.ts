@@ -11,7 +11,7 @@ export class King extends Figure {
         this.name = FigureNames.KING;
     }
 
-    canMove(target: Cell): boolean {
+    canMove(target: Cell, figuresBeatKings: {black: Figure[], white: Figure[]}): boolean {
         for(let figure of [...target.beatCellFigures.black, ...target.beatCellFigures.white]){
             if(figure.color !== this.color) return false;
         }

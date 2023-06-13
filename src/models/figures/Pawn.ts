@@ -14,14 +14,8 @@ export class Pawn extends Figure {
         this.name = FigureNames.PAWN;
     }
 
-    canMove(target: Cell): boolean {
-        if(this.color === Colors.WHITE && Figure.isWhiteKingUnderCheck){
-            return false;
-        }
-        if(this.color === Colors.BLACK && Figure.isBlackKingUnderCheck){
-            return false;
-        }
-        if (!super.canMove(target)) {
+    canMove(target: Cell, figuresBeatKings: {black: Figure[], white: Figure[]}): boolean {
+        if (!super.canMove(target, figuresBeatKings)) {
             return false;
         }
         const direction = this.cell.figure?.color === Colors.BLACK ? 1 : -1;

@@ -40,17 +40,27 @@ export class Figure {
         this.cellsCanAttack = [];
     }
 
-    canMove(target: Cell): boolean {
+    canMove(target: Cell, figuresBeatKings: {black: Figure[], white: Figure[]}): boolean {
+        if (target.figure?.color === this.color)
+            return false
+        if (target.figure?.name === FigureNames.KING)
+            return false;
+        if(Figure.isWhiteKingUnderCheck && this.color === Colors.WHITE){
+            for(let figureAttack of figuresBeatKings.white){
+                for(let cellAttack of figureAttack.cellsCanAttack){
+                    if(cellAttack === target || figureAttack.cell === target){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         if(Figure.isWhiteKingUnderCheck && this.color === Colors.WHITE && this.name !== FigureNames.KING){
             return false;
         }
         if(Figure.isBlackKingUnderCheck && this.color === Colors.BLACK && this.name !== FigureNames.KING){
             return false;
         }
-        if (target.figure?.color === this.color)
-            return false
-        if (target.figure?.name === FigureNames.KING)
-            return false;
 
         return true;
     }

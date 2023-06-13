@@ -12,14 +12,8 @@ export class Knight extends Figure{
         this.name = FigureNames.KNIGHT;
     }
 
-    canMove(target: Cell) {
-        if(this.color === Colors.WHITE && Figure.isWhiteKingUnderCheck){
-            return false;
-        }
-        if(this.color === Colors.BLACK && Figure.isBlackKingUnderCheck){
-            return false;
-        }
-        if(!super.canMove(target)){
+    canMove(target: Cell, figuresBeatKings: {black: Figure[], white: Figure[]}) {
+        if(!super.canMove(target, figuresBeatKings)){
             return false;
         }
         const dx = Math.abs(target.x - this.cell.x);

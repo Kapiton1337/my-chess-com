@@ -13,8 +13,7 @@ export class Board {
     figures: { black: Figure[], white: Figure[] } = {black: [], white: []};
     lostBlackFigures: Figure[] = [];
     lostWhiteFigures: Figure[] = [];
-    whiteKingUnderAttack: boolean = false;
-    blackKingUnderAttack: boolean = false;
+    figuresBeatKings: {black: Figure[], white: Figure[]} = {black: [], white: []};
 
     public initCells() {
         for (let i = 0; i < 8; i++) {
@@ -65,8 +64,10 @@ export class Board {
             if (figure.name === FigureNames.KING) {
                 if (figure.cell.isUnderAttackBlack()) {
                     figure.setWhiteKingUnderCheck();
+                    this.figuresBeatKings.white=[...figure.cell.beatCellFigures.black];
                 } else {
                     figure.removeWhiteKingUnderCheck();
+                    this.figuresBeatKings.white=[];
                 }
             }
         }
@@ -77,8 +78,10 @@ export class Board {
             if (figure.name === FigureNames.KING) {
                 if (figure.cell.isUnderAttackWhite()) {
                     figure.setBlackKingUnderCheck();
+                    this.figuresBeatKings.black=[...figure.cell.beatCellFigures.white];
                 } else {
                     figure.removeBlackKingUnderCheck();
+                    this.figuresBeatKings.black=[];
                 }
             }
         }
@@ -89,7 +92,7 @@ export class Board {
             const row = this.cells[i];
             for (let j = 0; j < row.length; j++) {
                 const target = row[j];
-                target.available = !!selectedCell?.figure?.canMove(target);
+                target.available = !!selectedCell?.figure?.canMove(target, this.figuresBeatKings);
             }
         }
     }
@@ -100,6 +103,7 @@ export class Board {
         newBoard.cells = this.cells;
         newBoard.lostWhiteFigures = this.lostWhiteFigures;
         newBoard.lostBlackFigures = this.lostBlackFigures;
+        newBoard.figuresBeatKings = this.figuresBeatKings;
         return newBoard;
     }
 

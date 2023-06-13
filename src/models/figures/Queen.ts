@@ -12,14 +12,8 @@ export class Queen extends Figure {
         this.name = FigureNames.QUEEN;
     }
 
-    canMove(target: Cell): boolean {
-        if(this.color === Colors.WHITE && Figure.isWhiteKingUnderCheck){
-            return false;
-        }
-        if(this.color === Colors.BLACK && Figure.isBlackKingUnderCheck){
-            return false;
-        }
-        if (!super.canMove(target)) {
+    canMove(target: Cell, figuresBeatKings: {black: Figure[], white: Figure[]}): boolean {
+        if (!super.canMove(target, figuresBeatKings)) {
             return false;
         }
         if (this.cell.isEmptyVertical(target)) {

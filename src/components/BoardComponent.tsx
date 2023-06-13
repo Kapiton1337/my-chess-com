@@ -18,7 +18,7 @@ const BoardComponent: FC<BoardProps> = ({board, setBoard, currentPlayer, swapPla
     const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
 
     function click(cell: Cell) {
-        if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell)) {
+        if (selectedCell && selectedCell !== cell && selectedCell.figure?.canMove(cell, board.figuresBeatKings)) {
             selectedCell.moveFigure(cell);
             swapPlayer();
             setSelectedCell(null);
